@@ -5,9 +5,8 @@ import '../style/MovieCard.scss'
 import Loader from './Loader'
 
 
-const MovieCard = () => {
+const MovieCard = ({movie}) => {
   let imageLoading = true
-  let movie
 
   if (movie?.Poster === 'N/A') {
     imageLoading = false
@@ -20,15 +19,13 @@ const MovieCard = () => {
   }
 
   return (
-    <Link 
-      to={`/movie/${movie?.imdbID}`}
-      className="movie">
-        <Loader 
-          scale=".5"
-          absolute />
-      <div
-        className="poster"
-        style={{ backgroundImage: `url(${movie?.Poster})` }}>
+    <Link to={`/movie/${movie?.imdbID}`} className="movie">
+        {
+          imageLoading
+          ? <Loader scale=".5" absolute />
+          : null
+        }
+      <div className="poster" style={{ backgroundImage: `url(${movie?.Poster})` }}>
         {
           movie?.Poster === 'N/A'
           ?
@@ -40,9 +37,7 @@ const MovieCard = () => {
         }
       </div>
       <div className="info">
-        <div 
-          className="poster"
-          style={{ backgroundImage: `url(${movie?.Poster})` }}>
+        <div  className="poster" style={{ backgroundImage: `url(${movie?.Poster})` }}>
         </div>
         <div className="year">{movie?.Year}</div>
         <div className="title">{movie?.Title}</div>

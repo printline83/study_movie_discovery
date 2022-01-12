@@ -17,10 +17,6 @@ export const types = [
   'Episode'
 ]
 
-export const init = {
-  keyword: '', 
-  genre: '',
-  year: new Date().getFullYear(),
-};
+
 
  

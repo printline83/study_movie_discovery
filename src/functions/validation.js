@@ -1,9 +1,9 @@
 
-function validationObject(state, msg) {
+export default function validationObject(state, msg) {
     let check = true;
     let message = '';
     for (const [key, value] of Object.entries(state)) {
-        if ( value === '' ) {
+        if (msg[key] !== undefined && value === '') {
             message = msg[key];
             check = false;
             break;
@@ -11,5 +11,3 @@ function validationObject(state, msg) {
     }
     return [check, message];
 }
-
-export default validationObject;
