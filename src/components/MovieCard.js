@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import '../style/MovieCard.scss'
@@ -6,15 +6,15 @@ import Loader from './Loader'
 
 
 const MovieCard = ({movie}) => {
-  let imageLoading = true
+  const [imageLoading, setImageLoading] = useState(true);
 
   if (movie?.Poster === 'N/A') {
-    imageLoading = false
+    if (imageLoading) setImageLoading(false);
   } else {
     const img = document.createElement('img')
     img.src = movie?.Poster
     img.addEventListener('load', () => {
-      imageLoading = false
+      if (imageLoading) setImageLoading(false);
     })
   }
 

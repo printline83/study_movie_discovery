@@ -8,11 +8,12 @@ import MovieCard from './MovieCard'
 
 const MovieList = () => {
   const {data, loading, error} = useSelector(state => state.movies);
+
   if (error) { 
-    console.log('에러가!!!!!!!!!!!!!!!'); 
     console.log(error); 
     return; 
   }
+  
   return (
     <div className="movie-list">
       {

@@ -1,17 +1,17 @@
 import * as api from "../api/movies";
 
 const GET_MOVIES = "GET_MOVIES";
-const GET_STATUS_SUCCESS = "GET_STATUS_SUCCESS";
-const GET_STATUS_ERROR = "GET_STATUS_ERROR";
+const GET_MOVIES_SUCCESS = "GET_MOVIES_SUCCESS";
+const GET_MOVIES_ERROR = "GET_MOVIES_ERROR";
 
 // 전체 데이터 가져오기
 export const getMovies = title => async dispatch => {
   dispatch({ type: GET_MOVIES });
 	try {
 		const result = await api.apiGetMovies(title);
-    dispatch({ type: GET_STATUS_SUCCESS, data: result.data.Response === "True" ? result.data.Search : [] });
+    dispatch({ type: GET_MOVIES_SUCCESS, data: result.data.Response === "True" ? result.data.Search : [] });
 	} catch (e) {
-		dispatch({ type: GET_STATUS_ERROR, error: e });
+		dispatch({ type: GET_MOVIES_ERROR, error: e });
 	}
 };
 
@@ -27,15 +27,22 @@ export default function movies(state = initialState, action) {
       state = {
         ...state,
         loading: true,
-        errr: null
+        error: null
       }
       break;
-    case GET_STATUS_SUCCESS:
+    case GET_MOVIES_SUCCESS:
       state = {
         data: action.data,
         loading: false,
-        errr: null
+        error: null
       }
+      break;
+    case GET_MOVIES_ERROR:
+      state = {
+        ...state,
+        loading: false,
+				error: action.error
+        }
       break;
   }
   return state;

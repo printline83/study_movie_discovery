@@ -1,43 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { getLikesDetail } from '../modules/likesDetail';
 
 import '../style/Recommend.scss'
-import { getMovies } from '../data/movieApi'
+import Loader from './Loader';
 import MovieCard from './MovieCard'
 
 
 const Recommend = () => {
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    getMovies()
+    dispatch(getLikesDetail());
   }, [])
 
-  const name = ["이누", "대지", "가을", "동주"]
-  const [movie, setMovie] = useState({})
-  
-  let loading = true
-
   return (
-    <>
-    {
-      name.map(n => <RecommendBelt name={n} />)
-    }
-    </>
+    <RecommendBelt/>
   )
 }
 
-const RecommendBelt = ({ name }) => {
+const RecommendBelt = () => {
+  const {data, loading, error} = useSelector(state => state.likesDetail);
+
+  if (error) { 
+    console.log(error); 
+    return; 
+  }
   return (
     <div className="recommend-belt">
       <div className="title">
-        {name}님이 좋아하는 영화 리스트
+        정대지가 좋아하는 영화 리스트
       </div>
 
       <div className="recommend-list">
-          <MovieCard />
-          <MovieCard />
-          <MovieCard />
-          <MovieCard />
-          <MovieCard />
+        {
+          loading
+          ? <Loader />
+          : (
+            data.length > 0
+            ? data.map(v => <MovieCard key={v.imdbID} movie={v} />)
+            : null
+          )
+        }
       </div>
     </div>
   )

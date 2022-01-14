@@ -1,16 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import '../style/MovieDetail.scss'
 import Loader from './Loader'
 
+import { getMovie } from '../modules/movie';
+import { setLike } from '../modules/liked';
+import { getLikes } from '../modules/likes';
+
 
 const MovieDetail = () => {
+  const {id} = useParams();
+  const dispatch = useDispatch();
+  const {movie, liked, likes} = useSelector(state => state);
+  const {data, loading, error} = movie;
+  const [imageLoading, setImageLoading] = useState(true);
 
-  const [movie, setMovie] = useState({})
+  useEffect(() => {
+    dispatch(getMovie(id));
+    dispatch(getLikes());
+  }, []);
   
-  let loading = false
-  let imageLoading = false
+  if (error) { 
+    console.log(error); 
+    return; 
+  }
 
+  const iLike = () => {
+    if (liked.data) return;
+    dispatch(setLike(id));
+  }
+
+  const likeState = likes.data.indexOf(id) > -1 ? true : false;
   function requestDifferentSizeImage(url, size=700) {
     if (!url) {
       return ""
@@ -19,103 +41,107 @@ const MovieDetail = () => {
     const img = document.createElement('img')
     img.src = src
     img.addEventListener('load', () => {
-      imageLoading = false
+      if (imageLoading) setImageLoading(false);
     })
     return src
   }
 
   return (
-    <div class="container">
+    <div className="container">
       {
         loading
         
         ?  // 로딩중인 경우
-        <div class="skeleton-loader">
-          <div class="poster">
+        <div className="skeleton-loader">
+          <div className="poster">
 
           </div>
-          <div class="skeletons">
-            <div class="skeleton title"></div>
-            <div class="skeleton specs"></div>
-            <div class="skeleton plot"></div>
-            <div class="skeleton etc"></div>
-            <div class="skeleton etc"></div>
-            <div class="skeleton etc"></div>
+          <div className="skeletons">
+            <div className="skeleton title"></div>
+            <div className="skeleton specs"></div>
+            <div className="skeleton plot"></div>
+            <div className="skeleton etc"></div>
+            <div className="skeleton etc"></div>
+            <div className="skeleton etc"></div>
           </div>
           <Loader absolute />
         </div>
         
         :  // 로딩이 끝난 경우
-        <div class="movie-details">
+        <div className="movie-details">
           <div 
-            class="poster"
-            style={{ backgroundImage: `url(${requestDifferentSizeImage(movie?.Poster)})` }}>
+            className="poster"
+            style={{ backgroundImage: `url(${requestDifferentSizeImage(data?.Poster)})` }}>
             {
               imageLoading
               ? <Loader scale=".7" absolute />
               : null
             }
-            <div className='like noselect'>
+            <div className={`like ${liked.data || likeState ? 'noselect liked' : ''}`} onClick={iLike}>
               <span>♥</span>
             </div>
           </div>
 
-          <div class="specs">
+          <div className="specs">
 
-            <div class="title">
-              {/* 영화 타이틀 */}
+            <div className="title">
+              {data?.title}
             </div>
 
-            <div class="labels">
+            <div className="labels">
               <span>
-                {/* 개봉 날짜 */}
+                {data?.Released}
               </span>
-              <span class="dot">·</span>
+              <span className="dot">·</span>
               <span>
-                {/* 상영 시간 */}
+                {data?.Runtime}
               </span>
-              <span class="dot">·</span>
+              <span className="dot">·</span>
               <span>
-                {/* 국가(지역) */}
+                {data?.Country}
               </span>
             </div>
-            <div class="plot">
-              {/* 설명 */}
+            <div className="plot">
+              {data?.Plot}
             </div>
-            <div class="ratings">
+            <div className="ratings">
               <h3>Ratings</h3>
-              <div class="rating-wrap">
+              <div className="rating-wrap">
                 {
-                  /* movie.Ratings를 순회하여 이미지 및 점수를 표출 */
-                  <div
-                    title="" // 출처(Source)
-                    class="rating">
-                    <img 
-                      src="" // /assets/{Source}.png
-                      alt="" // Source
-                      height="30" />
-                    <span>
-                      {/* 평점 */}
-                    </span>
-                  </div>
+                  data.Ratings !== undefined && data.Ratings.length > 0 
+                  ? data.Ratings.map((v, i) => (
+                    <div
+                      title={v.Source}  
+                      className="rating"
+                      key={i}>
+                      <img
+                        src={`/assets/${v.Source}.png`}  
+                        alt={v.Source}  
+                        height="30" />
+                      <span>
+                        {v.Value}
+                      </span>
+                    </div>
+                  ))
+                  : null
                 }
               </div>
             </div>
             <div>
               <h3>Actors</h3>          
-              {/* 배우(Actor) */}
+              {data?.Actors}
             </div>
             <div>
               <h3>Director</h3>
-              {/* 감독(Director) */}
+              {data?.Director}
             </div>
             <div>
               <h3>Production</h3>
-              {/* 제작사 */}
+              {data?.Production}
             </div>
             <div>
               <h3>Genre</h3>
-              {/* 장르 */}
+              {data?.Genre}
             </div>
           </div>
         </div>

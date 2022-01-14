@@ -75,8 +75,15 @@
     border: 1px solid $color--white-50;
     border-radius: 50%;
     cursor: pointer;
-
-    &:hover {
+    &.liked {
+      cursor: default;
+      border-color: $color--danger;
+      color: $color--danger;
+      span {
+        color: $color--danger;
+      }
+    }
+    &:not(.liked):hover {
       border: 1px solid $color--white;
       color: $color--white;
 
@@ -84,7 +91,6 @@
         color: $color--white;
       }
     }
-
     span {
       font-size: 20px;
       font-weight: 700;
