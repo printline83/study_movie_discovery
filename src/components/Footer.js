@@ -9,7 +9,7 @@ const Footer = () => {
       <div>
         <a href="">
           <span className="secondary"> @{new Date().getFullYear()} </span>
-          <span className="primary"> Created by printline83 </span>
+          <span className="primary">Created by printline83</span>
         </a>
       </div>
     </footer>
